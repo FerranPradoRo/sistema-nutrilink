@@ -1,0 +1,17 @@
+# Core GUI Framework
+PyQt6==6.7.0
+
+# Password hashing
+bcrypt==4.2.0
+
+# PDF generation
+reportlab==4.2.2
+weasyprint==62.1
+
+# Development tools
+pytest==8.3.2
+pytest-qt==4.4.0
+
+# Code formatting and linting
+black==24.4.2
+flake8==7.1.0
