@@ -2,7 +2,6 @@
 """
 NutriLink - Sistema de Registro de Pacientes para Consultorio Nutricionista
 Versión: 1.0.0
-Equipo de Desarrollo: Equipo 3
 """
 
 import sys
