@@ -2,7 +2,6 @@
 NutriLink Configuration Settings
 """
 
-import os
 from pathlib import Path
 
 # Base directory
