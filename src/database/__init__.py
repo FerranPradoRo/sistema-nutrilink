@@ -1,6 +1,4 @@
-"""
-Capa de datos: Users y Patients con SQL parametrizado y recálculo automático.
-"""
+"""Capa de datos con SQL parametrizado y recálculo automático."""
 from __future__ import annotations
 from typing import List, Tuple, Optional
 from src.database.connection import get_conn
@@ -9,8 +7,7 @@ from src.utils import valid_email, valid_phone
 
 # ---------- USERS ----------
 def create_user(name: str, email: str, password_hash: bytes) -> int:
-    if not valid_email(email):
-        raise ValueError("Correo inválido")
+    if not valid_email(email): raise ValueError("Correo inválido")
     conn = get_conn()
     cur = conn.execute(
         "INSERT INTO users (name,email,password_hash) VALUES (?,?,?)",
@@ -56,7 +53,7 @@ def list_patients(id_user: int, search: str = "") -> List[Tuple]:
     return list(cur.fetchall())
 
 def create_patient(id_user: int, first_name: str, last_name: str, sex: str, age: int,
-                   weight_kg: float, height_cm: float, phone: Optional[str], email: Optional[str]) -> int:
+                   weight_kg: float, height_cm: float, phone, email) -> int:
     if age < 0 or age > 120: raise ValueError("Edad fuera de rango (0-120)")
     if phone and not valid_phone(phone): raise ValueError("Teléfono debe tener 10 dígitos")
     if email and not valid_email(email): raise ValueError("Correo inválido")
@@ -90,8 +87,7 @@ def update_patient(id_patient: int, **fields) -> None:
     b, m, f, iw = _recalc(sex, age, weight, height)
 
     cols, vals = [], []
-    for k, v in fields.items():
-        cols.append(f"{k}=?"); vals.append(v)
+    for k, v in fields.items(): cols.append(f"{k}=?"); vals.append(v)
     cols += ["bmi=?","bmr=?","body_fat=?","ideal_weight=?"]
     vals += [b, m, f, iw, id_patient]
     sql = f"UPDATE patients SET {', '.join(cols)} WHERE id_patient=?"

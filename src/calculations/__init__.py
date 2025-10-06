@@ -1,4 +1,4 @@
-"""Fórmulas: IMC, TMB (Mifflin), %grasa (Deurenberg), peso ideal (Devine)."""
+"""Fórmulas IMC, TMB (Mifflin), %grasa (Deurenberg), peso ideal (Devine)."""
 
 def bmi(weight_kg: float, height_m: float) -> float:
     if height_m <= 0: return 0.0
