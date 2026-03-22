@@ -1,69 +1,48 @@
-"""
-Módulo de Autenticación - NutriLink
-Registro, login y hashing seguro (bcrypt con rondas de settings).
-"""
-from __future__ import annotations
-import hashlib
-from typing import Optional, Tuple, Dict
-from time import time
-
+import re
+import bcrypt
 from config import settings
-from src.database import create_user as _db_create_user, find_user_by_email
+from src.database import create_user, get_user_by_email
 
-try:
-    import bcrypt
-except Exception:
-    bcrypt = None  # fallback académico (PBKDF2)
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+PHONE_RE = re.compile(r"^\d{10}$")
 
-# ------------------ Hash de contraseñas ------------------
-def hash_password(password: str) -> bytes:
-    if bcrypt:
-        salt = bcrypt.gensalt(rounds=settings.BCRYPT_ROUNDS)
-        return bcrypt.hashpw(password.encode(), salt)
-    # Fallback (no productivo): PBKDF2
-    return hashlib.pbkdf2_hmac("sha256", password.encode(), b"nutrilink_salt", 200_000)
+def valid_email(s: str) -> bool:
+    return bool(EMAIL_RE.match(s or ""))
 
-def check_password(password: str, hashed: bytes) -> bool:
-    if bcrypt:
-        try:
-            return bcrypt.checkpw(password.encode(), hashed)
-        except ValueError:
-            return False
-    return hashed == hashlib.pbkdf2_hmac("sha256", password.encode(), b"nutrilink_salt", 200_000)
-
-# ------------------ Control de intentos (en memoria) ------------------
-_failed: Dict[str, Tuple[int, float]] = {}  # email -> (intentos, ultimo_ts)
-
-def _can_attempt(email: str) -> bool:
-    rec = _failed.get(email)
-    if not rec:
+def valid_phone(s: str) -> bool:
+    if not s:
         return True
-    attempts, last_ts = rec
-    if attempts < settings.MAX_LOGIN_ATTEMPTS:
-        return True
-    blocked_secs = settings.SESSION_TIMEOUT * 60
-    return (time() - last_ts) > blocked_secs
+    return bool(PHONE_RE.match(s or ""))
 
-def _register_fail(email: str) -> None:
-    attempts, _ = _failed.get(email, (0, 0.0))
-    _failed[email] = (attempts + 1, time())
+def hash_password(password: str) -> str:
+    rounds = settings.BCRYPT_ROUNDS
+    salt = bcrypt.gensalt(rounds)
+    return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
-def _reset_fail(email: str) -> None:
-    if email in _failed:
-        del _failed[email]
+def verify_password(password: str, password_hash: str) -> bool:
+    try:
+        return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
+    except Exception:
+        return False
 
-# ------------------ API pública ------------------
 def register(name: str, email: str, password: str) -> int:
-    return _db_create_user(name, email, hash_password(password))
+    if not name.strip():
+        raise ValueError("El nombre es obligatorio.")
+    if not valid_email(email):
+        raise ValueError("Correo inválido.")
+    if len(password) < 8:
+        raise ValueError("La contraseña debe tener al menos 8 caracteres.")
 
-def login(email: str, password: str) -> Optional[Tuple[int, str]]:
-    if not _can_attempt(email):
+    password_hash = hash_password(password)
+    return create_user(name.strip(), email.strip().lower(), password_hash)
+
+def login(email: str, password: str):
+    user = get_user_by_email(email.strip().lower())
+    if not user:
         return None
-    rec = find_user_by_email(email)
-    if not rec:
-        _register_fail(email); return None
-    ok = check_password(password, rec[3])  # (id_user, name, email, hash)
-    if not ok:
-        _register_fail(email); return None
-    _reset_fail(email)
-    return rec[0], rec[1]
+
+    user_id, user_name, user_email, password_hash = user
+    if not verify_password(password, password_hash):
+        return None
+
+    return user_id, user_name

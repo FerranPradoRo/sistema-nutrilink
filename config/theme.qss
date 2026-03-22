@@ -1,78 +1,142 @@
-/* ====== NutriLink QSS (sin variables) ====== */
-
-/* Fondo */
 QWidget {
-  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                              stop:0 #f3f6fb, stop:1 #e8edf5);
-  color: #0f172a;
-  font-size: 14px;
+    font-family: "Segoe UI";
+    background: #f4f7fb;
+    color: #0f172a;
+    font-size: 14px;
 }
 
-/* Card */
+QFrame#TopAccent {
+    background: #20b2a6;
+    min-height: 14px;
+    max-height: 14px;
+}
+
 QFrame#Card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
 }
 
-/* Títulos */
-QLabel#AppLogoText { font-size: 24px; font-weight: 700; }
-QLabel#H1 { font-size: 26px; font-weight: 800; }
-
-/* Inputs */
-QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit {
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 8px 12px;
-}
-QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
-QComboBox:focus, QTextEdit:focus {
-  border: 1px solid #2bb4a8;
-  background: #ffffff;
+QLabel#AppTitle {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
 }
 
-/* Botones base */
+QLabel#AppSubtitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+QLabel#H1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+QLineEdit,
+QSpinBox,
+QDoubleSpinBox,
+QComboBox,
+QDateEdit,
+QTimeEdit,
+QTextEdit {
+    background: #f8fafc;
+    border: 1px solid #d8e0ec;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+QLineEdit:focus,
+QSpinBox:focus,
+QDoubleSpinBox:focus,
+QComboBox:focus,
+QDateEdit:focus,
+QTimeEdit:focus,
+QTextEdit:focus {
+    border: 1px solid #20b2a6;
+    background: white;
+}
+
 QPushButton {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 9px 16px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-weight: 600;
 }
-QPushButton:hover { border-color: #cfd8e3; }
-QPushButton:disabled { background: #e5e7eb; color: #9ca3af; }
 
-/* Botones tipados */
-QPushButton[type="primary"] { background: #2bb4a8; color: white; }
-QPushButton[type="danger"]  { background: #ef4444; color: white; }
-QPushButton[type="warn"]    { background: #f59e0b; color: #111; }
-QPushButton[type="success"] { background: #22c55e; color: white; }
-
-/* ToolBar */
-QToolBar { background: transparent; border: none; padding: 4px 6px; }
-
-/* Tabla */
-QHeaderView::section {
-  background: #f9fafb;
-  color: #0f172a;
-  padding: 8px;
-  border: 1px solid #e5e7eb;
-  font-weight: 600;
+QPushButton:hover {
+    background: #dbe1e8;
 }
+
+QPushButton[type="primary"] {
+    background: #20b2a6;
+    color: white;
+}
+
+QPushButton[type="primary"]:hover {
+    background: #17998f;
+}
+
+QPushButton[type="success"] {
+    background: #22c55e;
+    color: white;
+}
+
+QPushButton[type="danger"] {
+    background: #ef4444;
+    color: white;
+}
+
+QPushButton#EyeChip {
+    background: #eef2f7;
+    color: #111827;
+    border: 1px solid #d5dce7;
+    border-radius: 8px;
+    padding: 4px 10px;
+    min-width: 70px;
+}
+
+QPushButton#EyeChip:hover {
+    background: #e3f6f4;
+    border: 1px solid #20b2a6;
+}
+
+QGroupBox {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: white;
+    padding: 12px;
+}
+
 QTableView {
-  gridline-color: #e5e7eb;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  selection-background-color: rgba(43,180,168,.20);
-  selection-color: #0f172a;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    gridline-color: #e5e7eb;
+    alternate-background-color: #f8fafc;
+    selection-background-color: #20b2a6;
+    selection-color: white;
 }
-QTableView::item { padding: 6px; }
-QTableView::item:alternate { background: #f7fafc; }
 
-/* Dialog */
-QDialog { background: #ffffff; }
+QHeaderView::section {
+    background: #e7ecef;
+    color: #111827;
+    font-weight: 700;
+    padding: 8px;
+    border: none;
+}
 
-/* Ajustes para logo emoji y separación */
-QLabel#LogoEmoji { padding-top: 8px; }
-QLabel#AppLogoText { margin-bottom: 6px; }
+QToolBar {
+    background: transparent;
+    border: none;
+    spacing: 8px;
+}
+
+QPushButton:flat {
+    background: transparent;
+    color: #20b2a6;
+    text-decoration: underline;
+}
