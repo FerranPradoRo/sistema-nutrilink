@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""
-NutriLink - Sistema de Registro de Pacientes (Desktop)
-"""
-import sys, os
-# Añadir src al path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+import os
+import sys
 
-from src.gui import main as gui_main  # el GUI crea QApplication y carga QSS
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.join(BASE_DIR, "src")
+
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+from src.gui import main
 
 if __name__ == "__main__":
-    sys.exit(gui_main())
+    sys.exit(main())

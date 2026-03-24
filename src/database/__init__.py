@@ -1,104 +1,217 @@
-"""
-Capa de datos: Users y Patients con SQL parametrizado y recálculo automático.
-"""
-from __future__ import annotations
-from typing import List, Tuple, Optional
+"""Capa de datos con SQL parametrizado y recálculo automático."""
 from src.database.connection import get_conn
-from src.calculations import bmi, bmr_mifflin, bodyfat_deurenberg, ideal_weight_devine
-from src.utils import valid_email, valid_phone
+from src.calculations import build_metrics
 
 # ---------- USERS ----------
-def create_user(name: str, email: str, password_hash: bytes) -> int:
-    if not valid_email(email):
-        raise ValueError("Correo inválido")
+def create_user(name: str, email: str, password_hash: str) -> int:
     conn = get_conn()
     cur = conn.execute(
-        "INSERT INTO users (name,email,password_hash) VALUES (?,?,?)",
+        "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
         (name, email, password_hash),
     )
     conn.commit()
-    return cur.lastrowid
+    new_id = cur.lastrowid
+    conn.close()
+    return new_id
 
-def find_user_by_email(email: str) -> Optional[tuple]:
+def get_user_by_email(email: str):
     conn = get_conn()
     cur = conn.execute(
-        "SELECT id_user, name, email, password_hash FROM users WHERE email=?",
+        "SELECT id_user, name, email, password_hash FROM users WHERE email = ?",
         (email,),
     )
-    return cur.fetchone()
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return None
+    return row["id_user"], row["name"], row["email"], row["password_hash"]
+
+def get_user_name(id_user: int) -> str:
+    conn = get_conn()
+    cur = conn.execute("SELECT name FROM users WHERE id_user = ?", (id_user,))
+    row = cur.fetchone()
+    conn.close()
+    return row["name"] if row else "Usuario"
 
 # ---------- PATIENTS ----------
-def _recalc(sex: str, age: int, weight_kg: float, height_cm: float):
-    bmi_val = bmi(weight_kg, height_cm / 100.0)
-    return (
-        bmi_val,
-        bmr_mifflin(sex, weight_kg, height_cm, age),
-        bodyfat_deurenberg(bmi_val, age, sex),
-        ideal_weight_devine(sex, height_cm),
-    )
-
-def list_patients(id_user: int, search: str = "") -> List[Tuple]:
-    conn = get_conn()
-    if search:
-        like = f"%{search.lower()}%"
-        q = """SELECT id_patient, first_name, last_name, sex, age, weight_kg, height_cm,
-                      phone, email, bmi, bmr, body_fat, ideal_weight
-               FROM patients
-               WHERE id_user=? AND (LOWER(first_name) LIKE ? OR LOWER(last_name) LIKE ?)
-               ORDER BY last_name COLLATE NOCASE ASC"""
-        cur = conn.execute(q, (id_user, like, like))
-    else:
-        q = """SELECT id_patient, first_name, last_name, sex, age, weight_kg, height_cm,
-                      phone, email, bmi, bmr, body_fat, ideal_weight
-               FROM patients WHERE id_user=?
-               ORDER BY last_name COLLATE NOCASE ASC"""
-        cur = conn.execute(q, (id_user,))
-    return list(cur.fetchall())
-
 def create_patient(id_user: int, first_name: str, last_name: str, sex: str, age: int,
-                   weight_kg: float, height_cm: float, phone: Optional[str], email: Optional[str]) -> int:
-    if age < 0 or age > 120: raise ValueError("Edad fuera de rango (0-120)")
-    if phone and not valid_phone(phone): raise ValueError("Teléfono debe tener 10 dígitos")
-    if email and not valid_email(email): raise ValueError("Correo inválido")
-    b, m, f, iw = _recalc(sex, age, weight_kg, height_cm)
+                   weight_kg: float, height_cm: float, phone=None, email=None) -> int:
+    metrics = build_metrics(sex, age, weight_kg, height_cm)
     conn = get_conn()
     cur = conn.execute(
-        """INSERT INTO patients(
-            id_user, first_name, last_name, sex, age, weight_kg, height_cm, phone, email, bmi, bmr, body_fat, ideal_weight
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        (id_user, first_name, last_name, sex, age, weight_kg, height_cm, phone, email, b, m, f, iw),
+        """
+        INSERT INTO patients (
+            id_user, first_name, last_name, sex, age, weight_kg, height_cm,
+            phone, email, bmi, body_fat_pct, ideal_weight, bmr
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            id_user, first_name, last_name, sex, age, weight_kg, height_cm,
+            phone, email, metrics["bmi"], metrics["body_fat_pct"],
+            metrics["ideal_weight"], metrics["bmr"]
+        ),
     )
     conn.commit()
-    return cur.lastrowid
+    new_id = cur.lastrowid
+    conn.close()
+    return new_id
 
-def update_patient(id_patient: int, **fields) -> None:
+def update_patient(id_patient: int, first_name: str, last_name: str, sex: str, age: int,
+                   weight_kg: float, height_cm: float, phone=None, email=None):
+    metrics = build_metrics(sex, age, weight_kg, height_cm)
     conn = get_conn()
-    row = conn.execute("SELECT sex, age, weight_kg, height_cm FROM patients WHERE id_patient=?",(id_patient,)).fetchone()
-    if not row: return
-    sex, age, weight, height = row
-    sex   = fields.get("sex", sex)
-    age   = int(fields.get("age", age))
-    weight= float(fields.get("weight_kg", weight))
-    height= float(fields.get("height_cm", height))
-
-    phone = fields.get("phone")
-    email = fields.get("email")
-    if age < 0 or age > 120: raise ValueError("Edad fuera de rango (0-120)")
-    if phone not in (None, "") and not valid_phone(str(phone)): raise ValueError("Teléfono debe tener 10 dígitos")
-    if email not in (None, "") and not valid_email(str(email)): raise ValueError("Correo inválido")
-
-    b, m, f, iw = _recalc(sex, age, weight, height)
-
-    cols, vals = [], []
-    for k, v in fields.items():
-        cols.append(f"{k}=?"); vals.append(v)
-    cols += ["bmi=?","bmr=?","body_fat=?","ideal_weight=?"]
-    vals += [b, m, f, iw, id_patient]
-    sql = f"UPDATE patients SET {', '.join(cols)} WHERE id_patient=?"
-    conn.execute(sql, tuple(vals))
+    conn.execute(
+        """
+        UPDATE patients
+        SET first_name = ?, last_name = ?, sex = ?, age = ?, weight_kg = ?, height_cm = ?,
+            phone = ?, email = ?, bmi = ?, body_fat_pct = ?, ideal_weight = ?, bmr = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id_patient = ?
+        """,
+        (
+            first_name, last_name, sex, age, weight_kg, height_cm,
+            phone, email, metrics["bmi"], metrics["body_fat_pct"],
+            metrics["ideal_weight"], metrics["bmr"], id_patient
+        ),
+    )
     conn.commit()
+    conn.close()
 
-def delete_patient(id_patient: int) -> None:
+def delete_patient(id_patient: int):
     conn = get_conn()
-    conn.execute("DELETE FROM patients WHERE id_patient=?", (id_patient,))
+    conn.execute("DELETE FROM patients WHERE id_patient = ?", (id_patient,))
     conn.commit()
+    conn.close()
+
+def list_patients(id_user: int, q: str = ""):
+    conn = get_conn()
+
+    if q:
+        like = f"%{q}%"
+        cur = conn.execute(
+            """
+            SELECT
+                id_patient,
+                first_name,
+                last_name,
+                sex,
+                age,
+                weight_kg,
+                height_cm,
+                phone,
+                email,
+                bmi,
+                bmr,
+                body_fat_pct,
+                ideal_weight
+            FROM patients
+            WHERE id_user = ?
+              AND (
+                    first_name LIKE ? COLLATE NOCASE
+                 OR last_name LIKE ? COLLATE NOCASE
+              )
+            ORDER BY last_name COLLATE NOCASE ASC, first_name COLLATE NOCASE ASC
+            """,
+            (id_user, like, like),
+        )
+    else:
+        cur = conn.execute(
+            """
+            SELECT
+                id_patient,
+                first_name,
+                last_name,
+                sex,
+                age,
+                weight_kg,
+                height_cm,
+                phone,
+                email,
+                bmi,
+                bmr,
+                body_fat_pct,
+                ideal_weight
+            FROM patients
+            WHERE id_user = ?
+            ORDER BY last_name COLLATE NOCASE ASC, first_name COLLATE NOCASE ASC
+            """,
+            (id_user,),
+        )
+
+    rows = [tuple(r) for r in cur.fetchall()]
+    conn.close()
+    return rows
+
+def list_patients_basic(id_user: int):
+    conn = get_conn()
+    cur = conn.execute(
+        """
+        SELECT id_patient, first_name || ' ' || last_name AS full_name
+        FROM patients
+        WHERE id_user = ?
+        ORDER BY last_name COLLATE NOCASE ASC, first_name COLLATE NOCASE ASC
+        """,
+        (id_user,),
+    )
+    rows = [(r["id_patient"], r["full_name"]) for r in cur.fetchall()]
+    conn.close()
+    return rows
+
+# ---------- APPOINTMENTS ----------
+def create_appointment(id_user: int, id_patient: int, appointment_date: str, appointment_time: str,
+                       status: str = "Programada", notes: str | None = None) -> int:
+    conn = get_conn()
+    cur = conn.execute(
+        """
+        INSERT INTO appointments (id_user, id_patient, appointment_date, appointment_time, status, notes)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (id_user, id_patient, appointment_date, appointment_time, status, notes),
+    )
+    conn.commit()
+    new_id = cur.lastrowid
+    conn.close()
+    return new_id
+
+def update_appointment(id_appointment: int, appointment_date: str, appointment_time: str,
+                       status: str, notes: str | None = None):
+    conn = get_conn()
+    conn.execute(
+        """
+        UPDATE appointments
+        SET appointment_date = ?, appointment_time = ?, status = ?, notes = ?
+        WHERE id_appointment = ?
+        """,
+        (appointment_date, appointment_time, status, notes, id_appointment),
+    )
+    conn.commit()
+    conn.close()
+
+def delete_appointment(id_appointment: int):
+    conn = get_conn()
+    conn.execute("DELETE FROM appointments WHERE id_appointment = ?", (id_appointment,))
+    conn.commit()
+    conn.close()
+
+def list_upcoming_appointments(id_user: int):
+    conn = get_conn()
+    cur = conn.execute(
+        """
+        SELECT
+            a.id_appointment,
+            p.first_name || ' ' || p.last_name AS patient_name,
+            a.appointment_date,
+            a.appointment_time,
+            a.status,
+            a.notes
+        FROM appointments a
+        JOIN patients p ON p.id_patient = a.id_patient
+        WHERE a.id_user = ?
+        ORDER BY a.appointment_date ASC, a.appointment_time ASC
+        """,
+        (id_user,),
+    )
+    rows = [tuple(r) for r in cur.fetchall()]
+    conn.close()
+    return rows

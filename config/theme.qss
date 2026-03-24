@@ -1,78 +1,359 @@
-/* ====== NutriLink QSS (sin variables) ====== */
-
-/* Fondo */
 QWidget {
-  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                              stop:0 #f3f6fb, stop:1 #e8edf5);
-  color: #0f172a;
-  font-size: 14px;
+    background-color: #f4f7f5;
+    font-family: "Segoe UI", Arial;
+    color: #1f2937;
 }
 
-/* Card */
-QFrame#Card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
+/* top */
+QFrame#TopAccent {
+    background-color: #22c55e;
+    min-height: 6px;
+    max-height: 6px;
 }
 
-/* Títulos */
-QLabel#AppLogoText { font-size: 24px; font-weight: 700; }
-QLabel#H1 { font-size: 26px; font-weight: 800; }
-
-/* Inputs */
-QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit {
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 8px 12px;
-}
-QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
-QComboBox:focus, QTextEdit:focus {
-  border: 1px solid #2bb4a8;
-  background: #ffffff;
+/* login left */
+QFrame#LeftPanel {
+    border-radius: 26px;
+    background: qlineargradient(
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #1db954,
+        stop:1 #4ade80
+    );
 }
 
-/* Botones base */
+QFrame#DecorBubbleLarge,
+QFrame#DecorBubbleMedium,
+QFrame#DecorBubbleSmall {
+    background: rgba(255,255,255,0.13);
+    border-radius: 20px;
+}
+
+QFrame#BrandCircle {
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.22);
+    border-radius: 95px;
+}
+
+QLabel#BrandIcon {
+    font-size: 84px;
+    color: #0b3b1a;
+}
+
+QLabel#LeftTitle {
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    background: transparent;
+}
+
+QLabel#LeftSub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.95);
+    background: transparent;
+}
+
+/* cards */
+QFrame#GlassCard, QFrame#PatientsTableCard {
+    background: white;
+    border-radius: 22px;
+    border: 1px solid #e5e7eb;
+}
+
+/* login */
+QLabel#MiniLogo {
+    color: #16a34a;
+    font-size: 28px;
+    font-weight: 900;
+    background: transparent;
+}
+
+QLabel#H1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#Muted {
+    font-size: 13px;
+    color: #6b7280;
+    background: transparent;
+}
+
+QLabel#FieldLabel {
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    background: transparent;
+}
+
+QLineEdit, QComboBox, QDateEdit, QTimeEdit, QTextEdit,
+QSpinBox, QDoubleSpinBox {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QTimeEdit:focus, QTextEdit:focus,
+QSpinBox:focus, QDoubleSpinBox:focus {
+    border: 2px solid #22c55e;
+}
+
 QPushButton {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 9px 16px;
+    background: #f3f4f6;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-weight: 700;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
 }
-QPushButton:hover { border-color: #cfd8e3; }
-QPushButton:disabled { background: #e5e7eb; color: #9ca3af; }
 
-/* Botones tipados */
-QPushButton[type="primary"] { background: #2bb4a8; color: white; }
-QPushButton[type="danger"]  { background: #ef4444; color: white; }
-QPushButton[type="warn"]    { background: #f59e0b; color: #111; }
-QPushButton[type="success"] { background: #22c55e; color: white; }
-
-/* ToolBar */
-QToolBar { background: transparent; border: none; padding: 4px 6px; }
-
-/* Tabla */
-QHeaderView::section {
-  background: #f9fafb;
-  color: #0f172a;
-  padding: 8px;
-  border: 1px solid #e5e7eb;
-  font-weight: 600;
+QPushButton:hover {
+    background: #e5e7eb;
 }
+
+QPushButton[type="primary"] {
+    background: #16a34a;
+    color: white;
+    border: none;
+}
+
+QPushButton[type="primary"]:hover {
+    background: #15803d;
+}
+
+QPushButton[type="success"] {
+    background: #0f7d2c;
+    color: white;
+    border: none;
+}
+
+QPushButton[type="success"]:hover {
+    background: #0b6b24;
+}
+
+QPushButton[type="danger"] {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+QPushButton[type="danger"]:hover {
+    background: #dc2626;
+}
+
+QPushButton#EyeChip {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 6px 10px;
+    min-width: 90px;
+}
+
+QPushButton#LinkBtn {
+    border: none;
+    background: transparent;
+    color: #16a34a;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+QPushButton#LinkBtn:hover {
+    color: #15803d;
+}
+
+/* page titles */
+QLabel#PageHeroTitle {
+    font-size: 34px;
+    font-weight: 800;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#PageHeroSub {
+    font-size: 14px;
+    color: #6b7280;
+    background: transparent;
+}
+
+QLabel#CardTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    background: transparent;
+}
+
+QLabel#CardSub {
+    font-size: 13px;
+    color: #6b7280;
+    background: transparent;
+}
+
+/* menu */
+QLabel#MenuLeaf {
+    font-size: 56px;
+    color: #166534;
+}
+
+QLabel#RightBrandTitle {
+    font-size: 32px;
+    font-weight: 800;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#RightBrandSub {
+    font-size: 14px;
+    color: #4b5563;
+    background: transparent;
+}
+
+QFrame#PatternPanel {
+    background: transparent;
+    border-radius: 22px;
+}
+
+QLabel#PatternHero {
+    font-size: 96px;
+    color: #166534;
+}
+
+QLabel#PatternLine {
+    font-size: 34px;
+    color: #166534;
+}
+
+/* patients/citas */
+QFrame#TopPatternBar {
+    min-height: 12px;
+    max-height: 12px;
+    background: qlineargradient(
+        x1:0, y1:0, x2:1, y2:0,
+        stop:0 #1b8f3b,
+        stop:1 #8fdc9b
+    );
+}
+
+QLabel#PatientsMainTitle {
+    font-size: 32px;
+    font-weight: 900;
+    color: #111827;
+}
+
+QLabel#StatTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+}
+
+QLabel#StatValue {
+    font-size: 28px;
+    font-weight: 900;
+    color: #111827;
+}
+
+QLineEdit#SearchInput {
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 16px;
+}
+
+/* table */
 QTableView {
-  gridline-color: #e5e7eb;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  selection-background-color: rgba(43,180,168,.20);
-  selection-color: #0f172a;
+    background: white;
+    border-radius: 18px;
+    border: 1px solid #dfe7e2;
+    gridline-color: #e5e7eb;
+    alternate-background-color: #f8fafc;
+    selection-background-color: #dcfce7;
+    selection-color: #111827;
+    font-size: 14px;
 }
-QTableView::item { padding: 6px; }
-QTableView::item:alternate { background: #f7fafc; }
 
-/* Dialog */
-QDialog { background: #ffffff; }
+QHeaderView::section {
+    background: #ffffff;
+    color: #166534;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 12px 10px;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+}
 
-/* Ajustes para logo emoji y separación */
-QLabel#LogoEmoji { padding-top: 8px; }
-QLabel#AppLogoText { margin-bottom: 6px; }
+QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+}
+
+QScrollBar::handle:vertical {
+    background: #86efac;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #22c55e;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line {
+    height: 0;
+}
+QFrame#MenuCircle {
+    background: white;
+    border: 10px solid #22c55e;
+    border-radius: 127px;
+}
+
+QLabel#MenuCircleIcon {
+    font-size: 110px;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#MenuLeaf {
+    font-size: 56px;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#RightBrandTitle {
+    font-size: 34px;
+    font-weight: 800;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#RightBrandSub {
+    font-size: 15px;
+    color: #4b5563;
+    background: transparent;
+}
+
+QLabel#PageHeroTitle {
+    font-size: 34px;
+    font-weight: 900;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#PageHeroSub {
+    font-size: 14px;
+    color: #6b7280;
+    background: transparent;
+}
+
+QLabel#CardTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    background: transparent;
+}
+
+QLabel#CardSub {
+    font-size: 14px;
+    color: #6b7280;
+    background: transparent;
+}

@@ -1,33 +1,37 @@
-"""Exportación de pacientes a PDF con ReportLab."""
-from __future__ import annotations
-from typing import Iterable, Sequence
+"""Exportación de pacientes a PDF (horizontal)."""
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
-try:
-    from reportlab.lib.pagesizes import A4
-    from reportlab.lib import colors
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-    from reportlab.lib.styles import getSampleStyleSheet
-except Exception:  # pragma: no cover
-    A4 = None
-
-HEADERS = ["Nombre","Apellidos","Sexo","Edad","Peso (kg)","Altura (cm)","Teléfono","Correo","IMC","TMB","%Grasa","Peso Ideal"]
-
-def export_patients_pdf(rows: Iterable[Sequence], path: str) -> None:
-    if not A4:
-        raise RuntimeError("ReportLab no está instalado. Ejecuta: pip install reportlab")
-    data = [HEADERS]
-    for r in rows:
-        data.append(list(r[1:]))  # omite ID
-
-    doc = SimpleDocTemplate(path, pagesize=A4)
+def export_patients_pdf(rows, output_path: str):
+    doc = SimpleDocTemplate(output_path, pagesize=landscape(A4))
     styles = getSampleStyleSheet()
-    elements = [Paragraph("NutriLink - Lista de Pacientes", styles["Title"])]
-    t = Table(data, repeatRows=1)
-    t.setStyle(TableStyle([
-        ("BACKGROUND",(0,0),(-1,0),colors.HexColor("#E8EEF9")),
-        ("GRID",(0,0),(-1,-1),0.25,colors.grey),
-        ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
-        ("ALIGN",(0,0),(-1,-1),"CENTER"),
+    story = []
+
+    story.append(Paragraph("NutriLink - Lista de pacientes", styles["Title"]))
+    story.append(Spacer(1, 12))
+
+    data = [[
+        "#", "Nombre", "Apellidos", "Sexo", "Edad", "Peso",
+        "Altura", "Teléfono", "Correo", "IMC", "TMB",
+        "% Grasa", "Peso Ideal"
+    ]]
+
+    for idx, row in enumerate(rows, start=1):
+        data.append([
+            idx, row[1], row[2], row[3], row[4], row[5], row[6],
+            row[7] or "", row[8] or "", row[9], row[10], row[11], row[12]
+        ])
+
+    table = Table(data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#20b2a6")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.whitesmoke, colors.HexColor("#eef9f8")]),
     ]))
-    elements.append(t)
-    doc.build(elements)
+
+    story.append(table)
+    doc.build(story)
