@@ -4,19 +4,33 @@ QWidget {
     color: #1f2937;
 }
 
-/* top */
+/* =========================================================
+   BARRA SUPERIOR
+   ========================================================= */
 QFrame#TopAccent {
     background-color: #22c55e;
     min-height: 6px;
     max-height: 6px;
 }
 
-/* login left */
+QFrame#TopPatternBar {
+    min-height: 12px;
+    max-height: 12px;
+    background: qlineargradient(
+        x1:0, y1:0, x2:1, y2:0,
+        stop:0 #1b8f3b,
+        stop:1 #8fdc9b
+    );
+}
+
+/* =========================================================
+   LOGIN IZQUIERDO
+   ========================================================= */
 QFrame#LeftPanel {
     border-radius: 26px;
     background: qlineargradient(
         x1:0, y1:0, x2:1, y2:1,
-        stop:0 #1db954,
+        stop:0 #19b14b,
         stop:1 #4ade80
     );
 }
@@ -37,6 +51,7 @@ QFrame#BrandCircle {
 QLabel#BrandIcon {
     font-size: 84px;
     color: #0b3b1a;
+    background: transparent;
 }
 
 QLabel#LeftTitle {
@@ -52,14 +67,29 @@ QLabel#LeftSub {
     background: transparent;
 }
 
-/* cards */
-QFrame#GlassCard, QFrame#PatientsTableCard {
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+QFrame#GlassCard,
+QFrame#PatientsTableCard {
     background: white;
     border-radius: 22px;
     border: 1px solid #e5e7eb;
 }
 
-/* login */
+QFrame#DashboardCard {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #e5e7eb;
+}
+
+QFrame#DashboardCard:hover {
+    border: 2px solid #22c55e;
+}
+
+/* =========================================================
+   TEXTOS
+   ========================================================= */
 QLabel#MiniLogo {
     color: #16a34a;
     font-size: 28px;
@@ -87,20 +117,104 @@ QLabel#FieldLabel {
     background: transparent;
 }
 
-QLineEdit, QComboBox, QDateEdit, QTimeEdit, QTextEdit,
-QSpinBox, QDoubleSpinBox {
+QLabel#PageHeroTitle {
+    font-size: 34px;
+    font-weight: 900;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#PageHeroSub {
+    font-size: 14px;
+    color: #6b7280;
+    background: transparent;
+}
+
+QLabel#PatientsMainTitle {
+    font-size: 32px;
+    font-weight: 900;
+    color: #111827;
+    background: transparent;
+}
+
+QLabel#StatTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    background: transparent;
+}
+
+QLabel#StatValue {
+    font-size: 28px;
+    font-weight: 900;
+    color: #111827;
+    background: transparent;
+}
+
+QLabel#MenuLeaf {
+    font-size: 56px;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#RightBrandTitle {
+    font-size: 34px;
+    font-weight: 800;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#DashboardCardTitle {
+    font-size: 24px;
+    font-weight: 900;
+    color: #166534;
+    background: transparent;
+}
+
+QLabel#DashboardCardSubtitle {
+    font-size: 14px;
+    color: #4b5563;
+    background: transparent;
+}
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+QLineEdit,
+QComboBox,
+QDateEdit,
+QTimeEdit,
+QTextEdit,
+QSpinBox,
+QDoubleSpinBox {
     background: white;
     border: 1px solid #d1d5db;
     border-radius: 14px;
     padding: 10px 12px;
     font-size: 14px;
+    selection-background-color: #bbf7d0;
+    selection-color: #14532d;
 }
 
-QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QTimeEdit:focus, QTextEdit:focus,
-QSpinBox:focus, QDoubleSpinBox:focus {
+QLineEdit:focus,
+QComboBox:focus,
+QDateEdit:focus,
+QTimeEdit:focus,
+QTextEdit:focus,
+QSpinBox:focus,
+QDoubleSpinBox:focus {
     border: 2px solid #22c55e;
 }
 
+QLineEdit#SearchInput {
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 16px;
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
 QPushButton {
     background: #f3f4f6;
     border-radius: 14px;
@@ -114,6 +228,10 @@ QPushButton:hover {
     background: #e5e7eb;
 }
 
+QPushButton:pressed {
+    background: #d1d5db;
+}
+
 QPushButton[type="primary"] {
     background: #16a34a;
     color: white;
@@ -124,14 +242,22 @@ QPushButton[type="primary"]:hover {
     background: #15803d;
 }
 
+QPushButton[type="primary"]:pressed {
+    background: #166534;
+}
+
 QPushButton[type="success"] {
-    background: #0f7d2c;
+    background: #22c55e;
     color: white;
     border: none;
 }
 
 QPushButton[type="success"]:hover {
-    background: #0b6b24;
+    background: #16a34a;
+}
+
+QPushButton[type="success"]:pressed {
+    background: #15803d;
 }
 
 QPushButton[type="danger"] {
@@ -142,6 +268,10 @@ QPushButton[type="danger"] {
 
 QPushButton[type="danger"]:hover {
     background: #dc2626;
+}
+
+QPushButton[type="danger"]:pressed {
+    background: #b91c1c;
 }
 
 QPushButton#EyeChip {
@@ -164,105 +294,12 @@ QPushButton#LinkBtn {
 
 QPushButton#LinkBtn:hover {
     color: #15803d;
-}
-
-/* page titles */
-QLabel#PageHeroTitle {
-    font-size: 34px;
-    font-weight: 800;
-    color: #166534;
     background: transparent;
 }
 
-QLabel#PageHeroSub {
-    font-size: 14px;
-    color: #6b7280;
-    background: transparent;
-}
-
-QLabel#CardTitle {
-    font-size: 18px;
-    font-weight: 800;
-    color: #111827;
-    background: transparent;
-}
-
-QLabel#CardSub {
-    font-size: 13px;
-    color: #6b7280;
-    background: transparent;
-}
-
-/* menu */
-QLabel#MenuLeaf {
-    font-size: 56px;
-    color: #166534;
-}
-
-QLabel#RightBrandTitle {
-    font-size: 32px;
-    font-weight: 800;
-    color: #166534;
-    background: transparent;
-}
-
-QLabel#RightBrandSub {
-    font-size: 14px;
-    color: #4b5563;
-    background: transparent;
-}
-
-QFrame#PatternPanel {
-    background: transparent;
-    border-radius: 22px;
-}
-
-QLabel#PatternHero {
-    font-size: 96px;
-    color: #166534;
-}
-
-QLabel#PatternLine {
-    font-size: 34px;
-    color: #166534;
-}
-
-/* patients/citas */
-QFrame#TopPatternBar {
-    min-height: 12px;
-    max-height: 12px;
-    background: qlineargradient(
-        x1:0, y1:0, x2:1, y2:0,
-        stop:0 #1b8f3b,
-        stop:1 #8fdc9b
-    );
-}
-
-QLabel#PatientsMainTitle {
-    font-size: 32px;
-    font-weight: 900;
-    color: #111827;
-}
-
-QLabel#StatTitle {
-    font-size: 14px;
-    font-weight: 700;
-    color: #374151;
-}
-
-QLabel#StatValue {
-    font-size: 28px;
-    font-weight: 900;
-    color: #111827;
-}
-
-QLineEdit#SearchInput {
-    font-size: 16px;
-    min-height: 48px;
-    border-radius: 16px;
-}
-
-/* table */
+/* =========================================================
+   TABLAS
+   ========================================================= */
 QTableView {
     background: white;
     border-radius: 18px;
@@ -284,76 +321,100 @@ QHeaderView::section {
     border-bottom: 1px solid #e5e7eb;
 }
 
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
 QScrollBar:vertical {
     background: transparent;
     width: 10px;
+    margin: 4px;
 }
 
 QScrollBar::handle:vertical {
     background: #86efac;
     border-radius: 5px;
+    min-height: 30px;
 }
 
 QScrollBar::handle:vertical:hover {
     background: #22c55e;
 }
 
-QScrollBar::add-line, QScrollBar::sub-line {
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
     height: 0;
 }
-QFrame#MenuCircle {
+
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px;
+    margin: 4px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #86efac;
+    border-radius: 5px;
+    min-width: 30px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #22c55e;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+/* =========================================================
+   CALENDARIO
+   ========================================================= */
+QCalendarWidget QWidget {
+    alternate-background-color: #f8fafc;
+}
+
+QCalendarWidget QToolButton {
+    color: #166534;
+    font-weight: 800;
+    background: transparent;
+    border: none;
+    margin: 4px;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+QCalendarWidget QToolButton:hover {
+    background: #dcfce7;
+}
+
+QCalendarWidget QMenu {
     background: white;
-    border: 10px solid #22c55e;
-    border-radius: 127px;
+    border: 1px solid #d1d5db;
 }
 
-QLabel#MenuCircleIcon {
-    font-size: 110px;
-    color: #166534;
-    background: transparent;
+QCalendarWidget QSpinBox {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 4px 6px;
 }
 
-QLabel#MenuLeaf {
-    font-size: 56px;
-    color: #166534;
-    background: transparent;
-}
-
-QLabel#RightBrandTitle {
-    font-size: 34px;
-    font-weight: 800;
-    color: #166534;
-    background: transparent;
-}
-
-QLabel#RightBrandSub {
-    font-size: 15px;
-    color: #4b5563;
-    background: transparent;
-}
-
-QLabel#PageHeroTitle {
-    font-size: 34px;
-    font-weight: 900;
-    color: #166534;
-    background: transparent;
-}
-
-QLabel#PageHeroSub {
-    font-size: 14px;
-    color: #6b7280;
-    background: transparent;
-}
-
-QLabel#CardTitle {
-    font-size: 20px;
-    font-weight: 800;
+QCalendarWidget QAbstractItemView:enabled {
+    font-size: 13px;
     color: #111827;
+    background-color: white;
+    selection-background-color: #22c55e;
+    selection-color: white;
+}
+
+/* =========================================================
+   SCROLL AREA DE CITAS
+   ========================================================= */
+QScrollArea {
+    border: none;
     background: transparent;
 }
 
-QLabel#CardSub {
-    font-size: 14px;
-    color: #6b7280;
+QScrollArea > QWidget > QWidget {
     background: transparent;
 }
